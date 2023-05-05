@@ -30,6 +30,7 @@ public class ProductListPageServletTest {
     @Before
     public void setup(){
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        servlet.init();
     }
 
     @Test
