@@ -1,44 +1,86 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.impl;
+
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.except.ProductNotFoundException;
+import com.es.phoneshop.model.product.interf.ProductDao;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.stream.Collectors;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ArrayListProductDao implements ProductDao {
     private List<Product> products;
+    private ReadWriteLock lock;
+    private Long maxId;
     public ArrayListProductDao() {
         products = new ArrayList<>();
         saveSampleProducts();
+        lock = new ReentrantReadWriteLock();
     }
     @Override
-    public Product getProduct(Long id) throws NoSuchElementException {
-        return products.stream()
-                .filter(product -> id.equals(product.getId()))
-                .findAny()
-                .get();
+    public Product getProduct(Long id) throws IllegalArgumentException, ProductNotFoundException {
+        if(id != null) {
+            lock.readLock().lock();
+            try {
+                return products.stream()
+                        .filter(product -> id.equals(product.getId()))
+                        .findAny()
+                        .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found"));
+            } finally {
+                lock.readLock().unlock();
+            }
+        } else {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
     }
 
     @Override
     public List<Product> findProducts() {
-        return products;
+        try {
+            lock.readLock().lock();
+            return products.stream()
+                    .filter(product -> product.getId() != null)
+                    .filter(product -> product.getStock() > 0)
+                    .collect(Collectors.toList());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public void save(Product product) {
-        Optional<Product> element = products.stream().filter(prod -> product.getId().equals(prod.getId())).findAny();
-        if (element.isPresent()) {
-            products.set(products.indexOf(element.get()), product);
-        } else {
-            products.add(product);
+        try {
+            lock.writeLock().lock();
+            if (product.getId() == null) {
+                product.setId(maxId++);
+                products.add(product);
+            } else {
+                Optional<Product> element = products.stream().filter(prod -> product.getId().equals(prod.getId())).findAny();
+                if (element.isPresent()) {
+                    products.set(products.indexOf(element.get()), product);
+                } else {
+                    products.add(product);
+                    maxId++;
+                }
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     @Override
     public void delete(Long id) {
-        Optional<Product> product = products.stream()
-                .filter(prod -> id.equals(prod.getId()))
-                .findAny();
-        if(product.isPresent()) {
-            products.remove(product.get());
+        try {
+            lock.writeLock().lock();
+            if (id != null) {
+                products.removeIf(product -> id.equals(product.getId()));
+            } else {
+                throw new IllegalArgumentException("Id cannot be null");
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
     private void saveSampleProducts() {

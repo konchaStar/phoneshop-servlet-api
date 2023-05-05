@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.product.impl.ArrayListProductDao;
+import com.es.phoneshop.model.product.interf.ProductDao;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +42,7 @@ public class ArrayListProductDaoTest
     @Test
     public void testProductDaoDeleteElement() {
         productDao.delete(13L);
-        int expectedSize = 12;
+        int expectedSize = 11;
         int actualSize = productDao.findProducts().size();
         Assert.assertEquals(expectedSize, actualSize);
     }
