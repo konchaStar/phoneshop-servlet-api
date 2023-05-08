@@ -1,4 +1,4 @@
-package com.es.phoneshop.model.product.except;
+package com.es.phoneshop.except;
 
 public class ProductNotFoundException extends RuntimeException {
     public ProductNotFoundException() {

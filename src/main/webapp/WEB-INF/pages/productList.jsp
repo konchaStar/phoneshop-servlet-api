@@ -5,15 +5,21 @@
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
 <tags:master pageTitle="Product List">
-  <p>
-    Welcome to Expert-Soft training!
-  </p>
+  <br>
+  <form>
+    <input type="text" name="product" value="${param.product}">
+    <input type="submit" value="Search">
+  </form>
   <table>
     <thead>
       <tr>
         <td>Image</td>
-        <td>Description</td>
-        <td class="price">Price</td>
+        <td>Description
+          <tags:sortList sort="description"/>
+        </td>
+        <td class="price">Price
+          <tags:sortList sort="price"/>
+        </td>
       </tr>
     </thead>
     <c:forEach var="product" items="${products}">

@@ -1,8 +1,10 @@
-package com.es.phoneshop.model.product.impl;
+package com.es.phoneshop.dao.impl;
 
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.except.ProductNotFoundException;
-import com.es.phoneshop.model.product.interf.ProductDao;
+import com.es.phoneshop.dao.sort.SortOrder;
+import com.es.phoneshop.dao.sort.SortType;
+import com.es.phoneshop.model.Product;
+import com.es.phoneshop.except.ProductNotFoundException;
+import com.es.phoneshop.dao.ProductDao;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -16,8 +18,9 @@ public class ArrayListProductDao implements ProductDao {
     private Long maxId;
     public ArrayListProductDao() {
         products = new ArrayList<>();
-        saveSampleProducts();
         lock = new ReentrantReadWriteLock();
+        maxId = Long.valueOf(1);
+        saveSampleProducts();
     }
     @Override
     public Product getProduct(Long id) throws IllegalArgumentException, ProductNotFoundException {
@@ -37,10 +40,11 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts() {
+    public List<Product> findProducts(String search, SortType type, SortOrder order) {
         try {
             lock.readLock().lock();
             return products.stream()
+                    .filter(product -> search == null || search.equals("") || product.getDescription().contains(search))
                     .filter(product -> product.getId() != null)
                     .filter(product -> product.getStock() > 0)
                     .collect(Collectors.toList());
