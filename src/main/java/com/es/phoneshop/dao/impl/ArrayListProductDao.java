@@ -1,31 +1,37 @@
 package com.es.phoneshop.dao.impl;
 
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.sort.SortOrder;
 import com.es.phoneshop.dao.sort.SortType;
-import com.es.phoneshop.model.Product;
 import com.es.phoneshop.except.ProductNotFoundException;
-import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.model.Product;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.stream.Collectors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
     private static ArrayListProductDao instance;
     public static ArrayListProductDao getInstance() {
-        if(instance == null) {
-            return instance = new ArrayListProductDao();
+        try {
+            lock.writeLock().lock();
+            if (instance == null) {
+                return instance = new ArrayListProductDao();
+            }
+            return instance;
+        } finally {
+            lock.writeLock().unlock();
         }
-        return instance;
     }
     private List<Product> products;
-    private ReadWriteLock lock;
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
     private Long maxId;
     private ArrayListProductDao() {
         products = new ArrayList<>();
-        lock = new ReentrantReadWriteLock();
         maxId = Long.valueOf(1);
     }
     @Override

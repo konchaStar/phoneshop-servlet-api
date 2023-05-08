@@ -4,7 +4,6 @@ import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.model.Product;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import java.math.BigDecimal;
 import java.util.Currency;
