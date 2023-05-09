@@ -35,7 +35,7 @@ public class ArrayListProductDao implements ProductDao {
         maxId = Long.valueOf(1);
     }
     @Override
-    public Product getProduct(Long id) throws IllegalArgumentException, ProductNotFoundException {
+    public Product getProduct(Long id) {
         if(id != null) {
             lock.readLock().lock();
             try {
@@ -53,7 +53,56 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public List<Product> findProducts(String search, SortType type, SortOrder order) {
-        Comparator<Product> sortComparator = new Comparator() {
+        Comparator<Product> sortComparator = getSortComparator(type, order);
+        Comparator<Product> searchComparator = getSearchComparator(search);
+        try {
+            lock.readLock().lock();
+            return products.stream()
+                    .filter(product -> {
+                        if(!(search == null || search.equals(""))) {
+                            for(String desc : search.toLowerCase().split("\\s")) {
+                                if(product.getDescription().toLowerCase().contains(desc)) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        return true;
+                    })
+                    .sorted(searchComparator)
+                    .filter(product -> product.getId() != null)
+                    .filter(product -> product.getStock() > 0)
+                    .sorted(sortComparator)
+                    .collect(Collectors.toList());
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+    private Comparator<Product> getSearchComparator(String search) {
+        return new Comparator<Product>() {
+            @Override
+            public int compare(Product o1, Product o2) {
+                if(!(search == null || search.equals(""))) {
+                    Product product1 = (Product) o1;
+                    Product product2 = (Product) o2;
+                    int count1 = 0;
+                    int count2 = 0;
+                    for (String desc : search.toLowerCase().split("\\s")) {
+                        if (product1.getDescription().toLowerCase().contains(desc)) {
+                            count1++;
+                        }
+                        if (product2.getDescription().toLowerCase().contains(desc)) {
+                            count2++;
+                        }
+                    }
+                    return count2 - count1;
+                }
+                return 0;
+            }
+        };
+    }
+    private Comparator<Product> getSortComparator(SortType type, SortOrder order) {
+        return new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
                 Product product1 = (Product) o1;
@@ -79,49 +128,6 @@ public class ArrayListProductDao implements ProductDao {
                 }
             }
         };
-        Comparator<Product> searchComparator = new Comparator<Product>() {
-            @Override
-            public int compare(Product o1, Product o2) {
-                if(!(search == null || search.equals(""))) {
-                    Product product1 = (Product) o1;
-                    Product product2 = (Product) o2;
-                    int count1 = 0;
-                    int count2 = 0;
-                    for (String desc : search.toLowerCase().split("\\s")) {
-                        if (product1.getDescription().toLowerCase().contains(desc)) {
-                            count1++;
-                        }
-                        if (product2.getDescription().toLowerCase().contains(desc)) {
-                            count2++;
-                        }
-                    }
-                    return count2 - count1;
-                }
-                return 0;
-            }
-        };
-        try {
-            lock.readLock().lock();
-            return products.stream()
-                    .filter(product -> {
-                        if(!(search == null || search.equals(""))) {
-                            for(String desc : search.toLowerCase().split("\\s")) {
-                                if(product.getDescription().toLowerCase().contains(desc)) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
-                        return true;
-                    })
-                    .sorted(searchComparator)
-                    .filter(product -> product.getId() != null)
-                    .filter(product -> product.getStock() > 0)
-                    .sorted(sortComparator)
-                    .collect(Collectors.toList());
-        } finally {
-            lock.readLock().unlock();
-        }
     }
 
     @Override
