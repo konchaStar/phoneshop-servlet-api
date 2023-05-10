@@ -13,7 +13,7 @@ import java.io.IOException;
 public class PriceHistoryPageServlet extends HttpServlet {
     private ProductDao productDao;
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init() {
         productDao = ArrayListProductDao.getInstance();
     }
 
