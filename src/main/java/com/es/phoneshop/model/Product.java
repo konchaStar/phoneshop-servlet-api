@@ -31,14 +31,7 @@ public class Product {
     }
 
     public void setHistoryList(ArrayList<PriceHistory> historyList) {
-        this.historyList = historyList;
-    }
-    public List<PriceHistory> getHistoryList() {
-        return historyList;
-    }
-
-    public void addHistoryPrice(PriceHistory history) {
-        historyList.add(history);
+        this.historyList.addAll(historyList);
         historyList.sort(new Comparator<PriceHistory>() {
             @Override
             public int compare(PriceHistory o1, PriceHistory o2) {
@@ -46,6 +39,10 @@ public class Product {
             }
         });
     }
+    public List<PriceHistory> getHistoryList() {
+        return historyList;
+    }
+
     public Long getId() {
         return id;
     }

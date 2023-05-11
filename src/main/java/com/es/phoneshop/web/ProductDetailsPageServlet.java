@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
+    private static final String PRODUCT_ATTRIBUTE = "product";
+    private static final String DISPATCHER_PATH = "/WEB-INF/pages/productData.jsp";
     private ArrayListProductDao productDao;
 
     @Override
@@ -20,7 +22,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getPathInfo();
-        request.setAttribute("product", productDao.getProduct(Long.valueOf(id.substring(1))));
-        request.getRequestDispatcher("/WEB-INF/pages/productData.jsp").forward(request, response);
+        request.setAttribute(PRODUCT_ATTRIBUTE, productDao.getProduct(Long.valueOf(id.substring(1))));
+        request.getRequestDispatcher(DISPATCHER_PATH).forward(request, response);
     }
 }

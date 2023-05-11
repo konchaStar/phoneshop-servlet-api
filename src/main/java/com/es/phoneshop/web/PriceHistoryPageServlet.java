@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class PriceHistoryPageServlet extends HttpServlet {
+    private static final String PRICES_ATTRIBUTE = "prices";
+    private static final String DISPATCHER_PATH = "/WEB-INF/pages/priceHistoryPage.jsp";
     private ProductDao productDao;
     @Override
     public void init() {
@@ -20,7 +22,7 @@ public class PriceHistoryPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getPathInfo().substring(1);
-        request.setAttribute("prices", productDao.getProduct(Long.valueOf(id)).getHistoryList());
-        request.getRequestDispatcher("/WEB-INF/pages/priceHistoryPage.jsp").forward(request, response);
+        request.setAttribute(PRICES_ATTRIBUTE, productDao.getProduct(Long.valueOf(id)).getHistoryList());
+        request.getRequestDispatcher(DISPATCHER_PATH).forward(request, response);
     }
 }

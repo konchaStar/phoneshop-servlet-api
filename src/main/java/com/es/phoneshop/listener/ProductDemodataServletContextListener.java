@@ -1,4 +1,4 @@
-package com.es.phoneshop.demodata;
+package com.es.phoneshop.listener;
 
 import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.model.PriceHistory;
@@ -7,14 +7,16 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 
 public class ProductDemodataServletContextListener implements ServletContextListener {
     private ArrayListProductDao products;
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        if(Boolean.valueOf(sce.getServletContext().getInitParameter("insertDemoData"))) {
+        if (Boolean.valueOf(sce.getServletContext().getInitParameter("insertDemoData"))) {
             products = ArrayListProductDao.getInstance();
             saveSampleProducts();
         }
@@ -34,7 +36,7 @@ public class ProductDemodataServletContextListener implements ServletContextList
         products.save(new Product(11L, "simc56", "Siemens C56", new BigDecimal(70), usd, 20, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C56.jpg"));
         products.save(new Product(12L, "simc61", "Siemens C61", new BigDecimal(80), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C61.jpg"));
         products.save(new Product(13L, "simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
-        products.getProduct(3L).addHistoryPrice(new PriceHistory(new Date("2022/06/13"), BigDecimal.valueOf(150L), usd));
+        products.getProduct(3L).setHistoryList(new ArrayList<>(List.of(new PriceHistory(new Date("2022/06/13"), BigDecimal.valueOf(150L), usd))));
     }
     @Override
     public void contextDestroyed(ServletContextEvent sce) {

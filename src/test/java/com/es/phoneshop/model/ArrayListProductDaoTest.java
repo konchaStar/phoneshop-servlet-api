@@ -24,7 +24,7 @@ public class ArrayListProductDaoTest
 
     @Test
     public void testFindProductsResults() {
-        assertTrue(!productDao.findProducts("", SortType.description, SortOrder.asc).isEmpty());
+        assertTrue(!productDao.findProducts("", SortType.DESCRIPTION, SortOrder.ASC).isEmpty());
     }
     @Test
     public void testProductDaoSaveNewElement() {
@@ -45,7 +45,7 @@ public class ArrayListProductDaoTest
     public void testProductDaoDeleteElement() {
         productDao.delete(13L);
         int expectedSize = 11;
-        int actualSize = productDao.findProducts("", SortType.description, SortOrder.asc).size();
+        int actualSize = productDao.findProducts("", SortType.DESCRIPTION, SortOrder.ASC).size();
         Assert.assertEquals(expectedSize, actualSize);
     }
 }

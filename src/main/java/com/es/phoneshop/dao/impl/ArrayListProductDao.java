@@ -3,7 +3,7 @@ package com.es.phoneshop.dao.impl;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.sort.SortOrder;
 import com.es.phoneshop.dao.sort.SortType;
-import com.es.phoneshop.except.ProductNotFoundException;
+import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.Product;
 
 import java.util.ArrayList;
@@ -16,6 +16,13 @@ import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
     private static ArrayListProductDao instance;
+    private List<Product> products;
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Long maxId;
+    private ArrayListProductDao() {
+        products = new ArrayList<>();
+        maxId = Long.valueOf(1);
+    }
     public static ArrayListProductDao getInstance() {
         try {
             lock.writeLock().lock();
@@ -26,13 +33,6 @@ public class ArrayListProductDao implements ProductDao {
         } finally {
             lock.writeLock().unlock();
         }
-    }
-    private List<Product> products;
-    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private Long maxId;
-    private ArrayListProductDao() {
-        products = new ArrayList<>();
-        maxId = Long.valueOf(1);
     }
     @Override
     public Product getProduct(Long id) {
@@ -108,18 +108,18 @@ public class ArrayListProductDao implements ProductDao {
                 Product product1 = (Product) o1;
                 Product product2 = (Product) o2;
                 if(type != null && order != null) {
-                    if(SortType.price == type) {
+                    if(SortType.PRICE == type) {
                         if(product1.getPrice().compareTo(product2.getPrice()) > 0) {
-                            return order == SortOrder.asc ? 1 : -1;
+                            return order == SortOrder.ASC ? 1 : -1;
                         } else if(product1.getPrice().compareTo(product2.getPrice()) < 0) {
-                            return order == SortOrder.asc ? -1 : 1;
+                            return order == SortOrder.ASC ? -1 : 1;
                         }
                         return 0;
                     } else {
                         if(product1.getDescription().compareTo(product2.getDescription()) > 0) {
-                            return order == SortOrder.asc ? 1 : -1;
+                            return order == SortOrder.ASC ? 1 : -1;
                         } else if(product1.getDescription().compareTo(product2.getDescription()) < 0) {
-                            return order == SortOrder.asc ? -1 : 1;
+                            return order == SortOrder.ASC ? -1 : 1;
                         }
                         return 0;
                     }
