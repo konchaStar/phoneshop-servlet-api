@@ -1,7 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model;
 
-import com.es.phoneshop.model.product.impl.ArrayListProductDao;
-import com.es.phoneshop.model.product.interf.ProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.sort.SortOrder;
+import com.es.phoneshop.dao.sort.SortType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,12 +19,12 @@ public class ArrayListProductDaoTest
 
     @Before
     public void setup() {
-        productDao = new ArrayListProductDao();
+        productDao = ArrayListProductDao.getInstance();
     }
 
     @Test
     public void testFindProductsResults() {
-        assertTrue(!productDao.findProducts().isEmpty());
+        assertTrue(!productDao.findProducts("", SortType.DESCRIPTION, SortOrder.ASC).isEmpty());
     }
     @Test
     public void testProductDaoSaveNewElement() {
@@ -43,7 +45,7 @@ public class ArrayListProductDaoTest
     public void testProductDaoDeleteElement() {
         productDao.delete(13L);
         int expectedSize = 11;
-        int actualSize = productDao.findProducts().size();
+        int actualSize = productDao.findProducts("", SortType.DESCRIPTION, SortOrder.ASC).size();
         Assert.assertEquals(expectedSize, actualSize);
     }
 }
