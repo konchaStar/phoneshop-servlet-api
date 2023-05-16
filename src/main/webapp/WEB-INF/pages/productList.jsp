@@ -4,7 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
-<tags:master pageTitle="Product List">
+<tags:master pageTitle="Product List" recentProducts="${history}">
   <br>
   <form>
     <input type="text" name="product" value="${param.product}">

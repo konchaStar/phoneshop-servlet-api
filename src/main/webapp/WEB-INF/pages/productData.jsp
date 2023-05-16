@@ -3,7 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:useBean id="product" class="com.es.phoneshop.model.Product" scope="request"/>
-<tags:master pageTitle="Product data" >
+<jsp:useBean id="history" class="java.util.ArrayList" scope="request"/>
+<tags:master pageTitle="Product data" recentProducts="${history}">
   <h1>${product.description}</h1>
   <c:if test="${not empty error}">
     <span class="error">

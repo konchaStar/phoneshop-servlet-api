@@ -34,7 +34,15 @@ img.product-tile {
 .success {
   color: green;
 }
-/* Page specific styles */
-body.product-list {
+.wrap {
+  width: 100%;
+  margin: 0 auto;
+  height: 120px;
+}
 
+.recent {
+  float: left;
+  width: 100px;
+  margin: 5px;
+  align-content: center;
 }
