@@ -32,12 +32,6 @@ public class Product {
 
     public void setHistoryList(ArrayList<PriceHistory> historyList) {
         this.historyList.addAll(historyList);
-        historyList.sort(new Comparator<PriceHistory>() {
-            @Override
-            public int compare(PriceHistory o1, PriceHistory o2) {
-                return o1.getDate().compareTo(o2.getDate());
-            }
-        });
     }
     public List<PriceHistory> getHistoryList() {
         return historyList;

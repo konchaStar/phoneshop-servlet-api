@@ -15,24 +15,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
-    private static ArrayListProductDao instance;
     private List<Product> products;
     private static final ReadWriteLock lock = new ReentrantReadWriteLock();
     private Long maxId;
+    private static class SingletonHolder {
+        private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
+    }
     private ArrayListProductDao() {
         products = new ArrayList<>();
         maxId = Long.valueOf(1);
     }
     public static ArrayListProductDao getInstance() {
-        try {
-            lock.writeLock().lock();
-            if (instance == null) {
-                return instance = new ArrayListProductDao();
-            }
-            return instance;
-        } finally {
-            lock.writeLock().unlock();
-        }
+        return SingletonHolder.INSTANCE;
     }
     @Override
     public Product getProduct(Long id) {

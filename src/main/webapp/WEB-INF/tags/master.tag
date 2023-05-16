@@ -1,6 +1,6 @@
 <%@ tag trimDirectiveWhitespaces="true" %>
 <%@ attribute name="pageTitle" required="true" %>
-
+<%@ attribute name="recent" type="" %>
 <html>
 <head>
   <title>${pageTitle}</title>
@@ -18,6 +18,7 @@
     <jsp:doBody/>
   </main>
   <footer>
+
     Expert soft
   </footer>
 </body>
