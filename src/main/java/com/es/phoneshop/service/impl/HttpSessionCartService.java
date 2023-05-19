@@ -45,15 +45,18 @@ public class HttpSessionCartService implements CartService {
         lock.writeLock().lock();
         try {
             Product product = productDao.getProduct(id);
-            if(product.getStock() < quantity) {
-                throw new OutOfStockException(product, quantity, product.getStock());
-            }
             CartItem item = new CartItem(product, quantity);
             int index;
             if ((index = cart.getItems().indexOf(item)) != -1) {
                 CartItem existed = cart.getItems().get(index);
+                if(product.getStock() < quantity + existed.getQuantity()) {
+                    throw new OutOfStockException(product, quantity, product.getStock());
+                }
                 existed.setQuantity(existed.getQuantity() + quantity);
             } else {
+                if(product.getStock() < quantity) {
+                    throw new OutOfStockException(product, quantity, product.getStock());
+                }
                 cart.getItems().add(item);
             }
         } finally {

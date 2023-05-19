@@ -21,8 +21,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private static final String ERROR_ATTRIBUTE = "error";
     private static final String NEGATIVE_NUMBER_ERROR = "Quantity must be more than 0";
     private static final String NOT_A_NUMBER_ERROR = "Not a number";
-
     private static final String DISPATCHER_PATH = "/WEB-INF/pages/productData.jsp";
+
     private ArrayListProductDao productDao;
     private CartService cartService;
     private HttpSessionRecentProductsService recentProductsService;
@@ -53,8 +53,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
         int quantity = 0;
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());
+            if(!stringQuantity.matches("\\d+((.|,)\\d+)?")) {
+                throw new NumberFormatException();
+            }
+            format.setParseIntegerOnly(true);
             quantity = format.parse(stringQuantity).intValue();
         } catch (ParseException e) {
+            request.setAttribute(ERROR_ATTRIBUTE, NOT_A_NUMBER_ERROR);
+            doGet(request, response);
+            return;
+        } catch (NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE, NOT_A_NUMBER_ERROR);
             doGet(request, response);
             return;
@@ -71,6 +79,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             doGet(request, response);
             return;
         }
-        response.sendRedirect(request.getContextPath() + "/products/" + id + "?message=Product added to cart");
+        response.sendRedirect(String.format("%s%s%d%s", request.getContextPath(), "/products/",
+                id, "?message=Product added to cart"));
     }
 }

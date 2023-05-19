@@ -92,4 +92,19 @@ public class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!obj.getClass().equals(Product.class)) {
+            return false;
+        }
+        Product product = (Product) obj;
+        if(this == product) {
+            return true;
+        }
+        return this.id.equals(product.id) && this.historyList.equals(product.historyList)
+                && this.stock == product.stock && this.code.equals(product.code) && this.currency.equals(product.currency)
+                && this.description.equals(product.description) && this.imageUrl.equals(product.imageUrl)
+                && this.price.equals(product.price);
+    }
 }
