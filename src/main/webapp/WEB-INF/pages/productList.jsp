@@ -15,11 +15,11 @@
       ${param.message}
     </span>
   </c:if>
-<%--  <c:if test="${not empty error}">--%>
-<%--    <span class="error">--%>
-<%--      There was an error adding to cart--%>
-<%--    </span>--%>
-<%--  </c:if>--%>
+  <c:if test="${not empty error}">
+    <span class="error">
+      There was an error adding to cart
+    </span>
+  </c:if>
   <table>
     <thead>
       <tr>
