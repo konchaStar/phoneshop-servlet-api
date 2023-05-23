@@ -25,6 +25,7 @@ public class CartPageServlet extends HttpServlet {
     private static final String ERROR_ATTRIBUTE = "error";
     private static final String NEGATIVE_NUMBER_ERROR = "Quantity must be more than 0";
     private static final String NOT_A_NUMBER_ERROR = "Not a number";
+    private static final String CART_JSP = "/WEB-INF/pages/cart.jsp";
 
     private ArrayListProductDao productDao;
     private CartService cartService;
@@ -39,7 +40,7 @@ public class CartPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("cart", cartService.getCart(request));
-        request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request, response);
+        request.getRequestDispatcher(CART_JSP).forward(request, response);
     }
 
     @Override
