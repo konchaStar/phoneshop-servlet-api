@@ -79,4 +79,9 @@ public class HttpSessionCartService implements CartService {
             lock.writeLock().unlock();
         }
     }
+
+    @Override
+    public void delete(Cart cart, Long id) {
+        cart.getItems().removeIf(item -> item.getProduct().getId().equals(id));
+    }
 }
