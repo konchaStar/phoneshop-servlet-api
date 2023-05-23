@@ -1,9 +1,10 @@
 package com.es.phoneshop.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Product {
+public class Product implements Serializable {
     private Long id;
     private String code;
     private String description;
@@ -13,7 +14,7 @@ public class Product {
     private Currency currency;
     private int stock;
     private String imageUrl;
-    private ArrayList<PriceHistory> historyList;
+    private List<PriceHistory> historyList = new ArrayList<>();
 
     public Product() {
     }
@@ -26,7 +27,6 @@ public class Product {
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
-        this.historyList = new ArrayList<>();
         this.historyList.add(new PriceHistory(new Date(System.currentTimeMillis()), price, currency));
     }
 

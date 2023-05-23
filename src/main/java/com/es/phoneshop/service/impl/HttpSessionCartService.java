@@ -63,4 +63,20 @@ public class HttpSessionCartService implements CartService {
             lock.writeLock().unlock();
         }
     }
+    @Override
+    public void update(Cart cart, Long id, int quantity) throws OutOfStockException {
+        lock.writeLock().lock();
+        try {
+            Product product = productDao.getProduct(id);
+            CartItem item = new CartItem(product, quantity);
+            int index = cart.getItems().indexOf(item);
+            CartItem existed = cart.getItems().get(index);
+            if(product.getStock() < quantity + existed.getQuantity()) {
+                throw new OutOfStockException(product, quantity, product.getStock());
+            }
+            existed.setQuantity(quantity);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
 }

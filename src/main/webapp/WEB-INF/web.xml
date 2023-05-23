@@ -48,4 +48,12 @@
   <listener>
     <listener-class>com.es.phoneshop.listener.ProductDemodataServletContextListener</listener-class>
   </listener>
+  <servlet>
+    <servlet-name>cart</servlet-name>
+    <servlet-class>com.es.phoneshop.web.CartPageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cart</servlet-name>
+    <url-pattern>/cart</url-pattern>
+  </servlet-mapping>
 </web-app>
