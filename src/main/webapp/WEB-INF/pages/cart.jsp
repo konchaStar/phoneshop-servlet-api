@@ -63,7 +63,9 @@
         <td><fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${item.product.currency.symbol}"/></td>
       </tr>
     </table>
-    <input type="submit" value="Update">
+    <c:if test="${not (cart.items.size() eq 0)}">
+      <input type="submit" value="Update">
+    </c:if>
   </form>
   <form method="post" id="deleteCartItem">
   </form>

@@ -73,7 +73,7 @@ public class HttpSessionCartService implements CartService {
             CartItem item = new CartItem(product, quantity);
             int index = cart.getItems().indexOf(item);
             CartItem existed = cart.getItems().get(index);
-            if(product.getStock() < quantity + existed.getQuantity()) {
+            if(product.getStock() < quantity) {
                 throw new OutOfStockException(product, quantity, product.getStock());
             }
             existed.setQuantity(quantity);
@@ -85,8 +85,13 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void delete(Cart cart, Long id) {
-        cart.getItems().removeIf(item -> item.getProduct().getId().equals(id));
-        recalculate(cart);
+        lock.writeLock().lock();
+        try {
+            cart.getItems().removeIf(item -> item.getProduct().getId().equals(id));
+            recalculate(cart);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
     private void recalculate(Cart cart) {
         cart.setTotalQuantity(cart.getItems().stream()
