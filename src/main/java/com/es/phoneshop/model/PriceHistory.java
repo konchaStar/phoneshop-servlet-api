@@ -1,12 +1,13 @@
 package com.es.phoneshop.model;
 
-import javax.swing.text.DateFormatter;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Currency;
 import java.util.Date;
 
-public class PriceHistory {
+public class PriceHistory implements Serializable {
+    private static final long serialVersionUID = 1L;
     private BigDecimal price;
     private String date;
     private Currency currency;

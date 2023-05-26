@@ -58,11 +58,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             }
             format.setParseIntegerOnly(true);
             quantity = format.parse(stringQuantity).intValue();
-        } catch (ParseException e) {
-            request.setAttribute(ERROR_ATTRIBUTE, NOT_A_NUMBER_ERROR);
-            doGet(request, response);
-            return;
-        } catch (NumberFormatException e) {
+        } catch (ParseException | NumberFormatException e) {
             request.setAttribute(ERROR_ATTRIBUTE, NOT_A_NUMBER_ERROR);
             doGet(request, response);
             return;
