@@ -1,6 +1,5 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.order.PaymentMethod;
 import com.es.phoneshop.service.CartService;
@@ -12,24 +11,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class CheckoutPageServlet extends HttpServlet {
-    private ArrayListProductDao productDao;
     private CartService cartService;
     private OrderService orderService;
 
     @Override
     public void init() {
-        productDao = ArrayListProductDao.getInstance();
         cartService = HttpSessionCartService.getInstance();
         orderService = DefaultOrderService.getInstance();
     }
@@ -50,8 +44,10 @@ public class CheckoutPageServlet extends HttpServlet {
         setRequiredParameter(request, "deliveryAddress", errors, order::setDeliveryAddress);
         setDeliveryDate(request, errors, order);
         setPaymentMethod(request, errors, order);
-        if(errors.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/checkout?message=Success");
+        if (errors.isEmpty()) {
+            orderService.placeOrder(order);
+            cartService.clearCart(cartService.getCart(request));
+            response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
         } else {
             request.setAttribute("errors", errors);
             request.setAttribute("order", order);
@@ -70,17 +66,16 @@ public class CheckoutPageServlet extends HttpServlet {
     }
     private void setDeliveryDate(HttpServletRequest request, Map<String, String> errors, Order order) {
         String value = request.getParameter("deliveryDate");
-        if(value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             errors.put("deliveryDate", "Value is required");
-        } else{
-            Locale locale = request.getLocale();
+        } else {
             LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             order.setDeliveryDate(date);
         }
     }
     private void setPaymentMethod(HttpServletRequest request, Map<String, String> errors, Order order) {
         String value = request.getParameter("paymentMethod");
-        if(value == null || value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             errors.put("paymentMethod", "Value is required");
         } else {
             order.setPaymentMethod(PaymentMethod.valueOf(value));

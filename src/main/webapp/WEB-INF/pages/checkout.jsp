@@ -8,11 +8,6 @@
             Errors occurred while placing order
         </span>
     </c:if>
-    <c:if test="${not empty param.message}">
-        <span class="success">
-            ${param.message}
-        </span>
-    </c:if>
     <table>
         <thead>
         <tr>
