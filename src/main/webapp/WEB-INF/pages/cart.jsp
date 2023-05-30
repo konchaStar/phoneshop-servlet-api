@@ -64,7 +64,8 @@
       </tr>
     </table>
     <c:if test="${not (cart.items.size() eq 0)}">
-      <input type="submit" value="Update">
+      <input type="submit" value="Update"><br>
+      <button formaction="${pageContext.servletContext.contextPath}/checkout" formmethod="get">Checkout</button>
     </c:if>
   </form>
   <form method="post" id="deleteCartItem">

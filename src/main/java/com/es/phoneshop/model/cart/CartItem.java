@@ -4,8 +4,14 @@ import com.es.phoneshop.model.Product;
 
 import java.io.Serializable;
 
-public class CartItem implements Serializable {
+public class CartItem implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     private Product product;
     private int quantity;
 
