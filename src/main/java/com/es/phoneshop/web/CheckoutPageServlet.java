@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class CheckoutPageServlet extends HttpServlet {
+    private static final String ERROR_MESSAGE = "Value is required";
+    private static final String CHECKOUT_JSP = "/WEB-INF/pages/checkout.jsp";
     private CartService cartService;
     private OrderService orderService;
 
@@ -31,7 +33,7 @@ public class CheckoutPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("order", orderService.getOrder(cartService.getCart(request)));
         request.setAttribute("paymentMethods", orderService.getPaymentMethods());
-        request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
+        request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
     }
 
     @Override
@@ -52,14 +54,14 @@ public class CheckoutPageServlet extends HttpServlet {
             request.setAttribute("errors", errors);
             request.setAttribute("order", order);
             request.setAttribute("paymentMethods", orderService.getPaymentMethods());
-            request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
+            request.getRequestDispatcher(CHECKOUT_JSP).forward(request, response);
         }
     }
     private void setRequiredParameter(HttpServletRequest request, String parameter, Map<String, String> errors,
                                       Consumer<String> consumer) {
         String value = request.getParameter(parameter);
         if (value == null || value.isEmpty()) {
-           errors.put(parameter, "Value is required");
+           errors.put(parameter, ERROR_MESSAGE);
         } else {
             consumer.accept(value);
         }
@@ -67,7 +69,7 @@ public class CheckoutPageServlet extends HttpServlet {
     private void setDeliveryDate(HttpServletRequest request, Map<String, String> errors, Order order) {
         String value = request.getParameter("deliveryDate");
         if (value == null || value.isEmpty()) {
-            errors.put("deliveryDate", "Value is required");
+            errors.put("deliveryDate", ERROR_MESSAGE);
         } else {
             LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             order.setDeliveryDate(date);
@@ -76,7 +78,7 @@ public class CheckoutPageServlet extends HttpServlet {
     private void setPaymentMethod(HttpServletRequest request, Map<String, String> errors, Order order) {
         String value = request.getParameter("paymentMethod");
         if (value == null || value.isEmpty()) {
-            errors.put("paymentMethod", "Value is required");
+            errors.put("paymentMethod", ERROR_MESSAGE);
         } else {
             order.setPaymentMethod(PaymentMethod.valueOf(value));
         }

@@ -32,7 +32,7 @@ public class ArrayListOrderDao implements OrderDao {
             lock.readLock().lock();
             try {
                 return orders.stream()
-                        .filter(product -> id.equals(product.getSecureId()))
+                        .filter(product -> id.equals(product.getId()))
                         .findAny()
                         .orElseThrow(() -> new OrderNotFoundException("Product with id " + id + " not found"));
             } finally {
