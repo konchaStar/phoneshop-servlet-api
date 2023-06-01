@@ -1,9 +1,8 @@
 package com.es.phoneshop.web.filters;
 
-import com.es.phoneshop.security.DosProtectionService;
-import com.es.phoneshop.security.impl.DefaultDosProtectionService;
+import com.es.phoneshop.service.security.DosProtectionService;
+import com.es.phoneshop.service.security.impl.DefaultDosProtectionService;
 import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;

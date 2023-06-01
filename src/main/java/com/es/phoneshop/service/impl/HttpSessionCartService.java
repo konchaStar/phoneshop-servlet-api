@@ -103,8 +103,12 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public void clearCart(Cart cart) {
-        cart.getItems().clear();
-        recalculate(cart);
+    public void clearCart(HttpServletRequest request) {
+        lock.writeLock().lock();
+        try {
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, null);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 }

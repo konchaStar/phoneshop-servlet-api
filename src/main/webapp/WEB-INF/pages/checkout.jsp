@@ -63,17 +63,23 @@
             <tag:orderRowForm label="Last name" name="lastName" errors="${errors}" order="${order}"/>
             <tag:orderRowForm label="Phone" name="phone" errors="${errors}" order="${order}"/>
             <tr>
-                <c:set var="error" value="${error['deliveryAddress']}"/>
-                <td>Delivery date</td>
-                <td><input name="deliveryDate" type="date" value="${not empty error ? error['deliveryAddress'] : order.deliveryDate}"></td>
+                <c:set var="error" value="${errors['deliveryDate']}"/>
+                <td>Delivery date<span style="color: red">*</span></td>
+                <td>
+                    <input name="deliveryDate" type="date" value="${not empty error ? param['deliveryDate'] : order.deliveryDate}">
+                    <c:if test="${not empty error}">
+                        <div class="error">
+                                ${error}
+                        </div>
+                    </c:if>
+                </td>
             </tr>
             <tag:orderRowForm label="Delivery address" name="deliveryAddress" errors="${errors}" order="${order}"/>
             <tr>
                 <c:set var="error" value="${errors['paymentMethod']}"/>
-                <td>Payment method</td>
+                <td>Payment method<span style="color: red">*</span></td>
                 <td>
                     <select name="paymentMethod">
-                        <option></option>
                         <c:forEach var="paymentMethod" items="${paymentMethods}">
                             <c:choose>
                                 <c:when test="${empty error && paymentMethod eq order.paymentMethod}">
