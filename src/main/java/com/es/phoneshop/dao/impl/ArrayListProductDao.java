@@ -1,5 +1,6 @@
 package com.es.phoneshop.dao.impl;
 
+import com.es.phoneshop.dao.EntityAbstractDao;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.dao.sort.SortOrder;
 import com.es.phoneshop.dao.sort.SortType;
@@ -14,15 +15,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class ArrayListProductDao implements ProductDao {
-    private List<Product> products;
-    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private Long maxId;
+public class ArrayListProductDao extends EntityAbstractDao<Product> implements ProductDao {
     private static class SingletonHolder {
         private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
     }
     private ArrayListProductDao() {
-        products = new ArrayList<>();
+        entities = new ArrayList<>();
         maxId = Long.valueOf(1);
     }
     public static ArrayListProductDao getInstance() {
@@ -30,19 +28,7 @@ public class ArrayListProductDao implements ProductDao {
     }
     @Override
     public Product getProduct(Long id) {
-        if(id != null) {
-            lock.readLock().lock();
-            try {
-                return products.stream()
-                        .filter(product -> id.equals(product.getId()))
-                        .findAny()
-                        .orElseThrow(() -> new ProductNotFoundException("Product with id " + id + " not found"));
-            } finally {
-                lock.readLock().unlock();
-            }
-        } else {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
+        return getEntity(id);
     }
 
     @Override
@@ -51,7 +37,7 @@ public class ArrayListProductDao implements ProductDao {
         Comparator<Product> searchComparator = getSearchComparator(search);
         try {
             lock.readLock().lock();
-            return products.stream()
+            return entities.stream()
                     .filter(product -> {
                         if(!(search == null || search.equals(""))) {
                             for(String desc : search.toLowerCase().split("\\s")) {
@@ -125,32 +111,11 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public void save(Product product) {
-        try {
-            lock.writeLock().lock();
-            if (product.getId() == null) {
-                product.setId(maxId++);
-                products.add(product);
-            } else {
-                Optional<Product> element = products.stream().filter(prod -> product.getId().equals(prod.getId())).findAny();
-                if (element.isPresent()) {
-                    products.set(products.indexOf(element.get()), product);
-                } else {
-                    products.add(product);
-                    maxId++;
-                }
-            }
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    @Override
     public void delete(Long id) {
         try {
             lock.writeLock().lock();
             if (id != null) {
-                products.removeIf(product -> id.equals(product.getId()));
+                entities.removeIf(product -> id.equals(product.getId()));
             } else {
                 throw new IllegalArgumentException("Id cannot be null");
             }

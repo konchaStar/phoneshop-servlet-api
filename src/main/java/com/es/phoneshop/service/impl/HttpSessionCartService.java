@@ -101,4 +101,14 @@ public class HttpSessionCartService implements CartService {
                 .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
+
+    @Override
+    public void clearCart(HttpServletRequest request) {
+        lock.writeLock().lock();
+        try {
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, null);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
 }
