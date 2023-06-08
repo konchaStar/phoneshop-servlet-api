@@ -2,11 +2,13 @@ package com.es.phoneshop.dao.impl;
 
 import com.es.phoneshop.dao.EntityAbstractDao;
 import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.search.SearchParameter;
 import com.es.phoneshop.dao.sort.SortOrder;
 import com.es.phoneshop.dao.sort.SortType;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.Product;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -57,6 +59,45 @@ public class ArrayListProductDao extends EntityAbstractDao<Product> implements P
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    @Override
+    public List<Product> findAdvancedProducts(String search, SearchParameter parameter, BigDecimal minPrice, BigDecimal maxPrice) {
+        return entities.stream()
+                .filter(product -> {
+                    if(search != null && !search.trim().equals("")) {
+                        return isMatch(search, (Product) product, parameter);
+                    }
+                    return true;
+                })
+                .filter(product -> {
+                    if(minPrice != null) {
+                        return minPrice.compareTo(product.getPrice()) <= 0;
+                    }
+                    return true;
+                })
+                .filter(product -> {
+                    if(maxPrice != null) {
+                        return maxPrice.compareTo(product.getPrice()) >= 0;
+                    }
+                    return true;
+                })
+                .filter(product -> product.getId() != null)
+                .filter(product -> product.getStock() > 0)
+                .collect(Collectors.toList());
+    }
+
+    private boolean isMatch(String search, Product product, SearchParameter parameter) {
+        if(parameter == SearchParameter.ALL_WORDS) {
+            return product.getDescription().toLowerCase().contains(search.toLowerCase());
+        } else {
+            for(String desc : search.toLowerCase().split("\\s")) {
+                if(product.getDescription().toLowerCase().contains(desc)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     private Comparator<Product> getSearchComparator(String search) {
         return new Comparator<Product>() {
